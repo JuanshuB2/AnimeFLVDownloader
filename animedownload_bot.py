@@ -5,6 +5,7 @@ import sys
 import threading
 from tqdm import tqdm
 from descargarFichero import descargarFicheroconBarra
+from interactuadorXpath import *
 import os
 
 threads = []
@@ -31,98 +32,10 @@ class AnimeDownloader():
         tabs = self.driver.window_handles
         self.driver.switch_to.window(tabs[-1])
 
-    def seleccionar_segunda_opcion(self, n_opcion):
-        #clickamos la segunda opcion
-        opc_2 = self.driver.find_element_by_xpath('//*[@id="XpndCn"]/div[1]/ul/li[2]/a')
-        opc_2.click()
-
-    def seleccionar_opcionFembed(self):
-        contenedor_opciones = self.driver.find_element_by_xpath('//*[@id="XpndCn"]/div[1]/ul')
-        opciones = contenedor_opciones.find_elements_by_xpath('li')
-
-        for opcion in opciones:
-            titulo_opcion = opcion.get_attribute("title")
-            if(titulo_opcion == 'Fembed'):
-                opcion.find_element_by_xpath('a').click()
-        
-
-    def getVideo_Fembed(self):
-        #cambiamos el contexto, al reproductor de video (es una web incrustada)
-        iframe_video = self.driver.find_element_by_xpath('//*[@id="video_box"]/iframe')
-        self.driver.switch_to_frame(iframe_video)
-        #le damos al play
-        botonPlay = self.driver.find_element_by_xpath('/html/body/div[2]/div')
-        botonPlay.click()
-
-        sleep(0.5)
-        self.close_all_tabs(1)
-
-        #Espera para la carga del video
-        sleep(20)
-
-        iframe_video2 = self.driver.find_element_by_xpath('//*[@id="video_box"]/iframe')
-        self.driver.switch_to_frame(iframe_video2)
-        capitulo = self.driver.find_element_by_xpath('//*[@id="vstr"]/div[2]/div[3]/video')
-
-        return capitulo
-
-    def getVideo_general(self):
-        print("funcion por implementar")
-
-    #Devuelve la url y el nombre
-    def reproducirvideo(self, link_capitulo):
-        #vamos a la web
-        self.driver.get(link_capitulo)
-        #espera para la carga
-        sleep(7)
-        #cerramos el popup de inicio
-        self.close_all_tabs(1)
-        sleep(0.5)
-
-        self.seleccionar_opcionFembed()
-
-        #Guardamos el nombre del capitulo
-        nombre_capitulo = self.driver.find_element_by_xpath('//*[@id="XpndCn"]/div[1]/div[1]/h1').text
-
-        #Espera carga reproductor
-        sleep(7)
-
-        capitulo = self.getVideo_Fembed()
-
-        #Guarreria para que cierre la puta tab 
-        #self.abrirnuevaTab()
-        #tabs = self.driver.window_handles
-        #self.driver.switch_to.window(tabs[0])
-        #self.driver.close()
-        #tabs = self.driver.window_handles
-        #self.driver.switch_to.window(tabs[0])
-
-        return capitulo.get_property('src'), nombre_capitulo
-
-    #Devuelve la url y el nombre
-    def reproducirvideo_elegible(self, link_capitulo):
-        #Guardamos el nombre del capitulo
-        nombre_capitulo = self.driver.find_element_by_xpath('//*[@id="XpndCn"]/div[1]/div[1]/h1').text
-
-        #Espera carga reproductor
-        raw_input("Elige la opcion y presiona una tecla")
-
-        capitulo = self.getVideo_Fembed()
-
-        #Guarreria para que cierre la puta tab 
-        #self.abrirnuevaTab()
-        #tabs = self.driver.window_handles
-        #self.driver.switch_to.window(tabs[0])
-        #self.driver.close()
-        #tabs = self.driver.window_handles
-        #self.driver.switch_to.window(tabs[0])
-
-        return capitulo.get_property('src'), nombre_capitulo
-
     #numero hebra es la posicion dondre saldra la barra de descarga, que corresponde con la hebra
     def descargar_capitulo(self, link_capitulo, numero_hebra, ruta = ''):
         
-        video_url, nombrecapitulo = self.reproducirvideo(link_capitulo)
+        video_url, nombrecapitulo = reproducirvideo(self, link_capitulo)
 
         print(nombrecapitulo)
 
@@ -132,13 +45,13 @@ class AnimeDownloader():
             hebra.start()
             threads.append(hebra)
         except IOError:
-            print("El capítulo: " + nombrecapitulo + " no esta disponible")
+            print("El capítulo: " + nombrecapitulo + " error de descarga, el video esta caido")
 
     #pausa antes de elegir el reproductor
     #numero hebra es la posicion dondre saldra la barra de descarga, que corresponde con la hebra
     def descargar_capitulo_con_eleccion(self, link_capitulo, numero_hebra, ruta = ''):
         
-        video_url, nombrecapitulo = self.reproducirvideo_elegible(link_capitulo)
+        video_url, nombrecapitulo = reproducirvideo_elegible(self, link_capitulo)
 
         print(nombrecapitulo)
 
