@@ -37,6 +37,9 @@ class AnimeDownloader():
         
         video_url, nombrecapitulo = reproducirvideo(self, link_capitulo)
 
+        #Para que salgan bien las barras al meter un nuevo episodio
+        os.system('cls' if os.name == 'nt' else 'clear')
+
         print(nombrecapitulo)
 
         #creamos la hebra para que ponga a descargar y pueda seguir con el resto
@@ -45,7 +48,7 @@ class AnimeDownloader():
             hebra.start()
             threads.append(hebra)
         except IOError:
-            print("El capítulo: " + nombrecapitulo + " error de descarga, el video esta caido")
+            print("El capitulo: " + nombrecapitulo + " error de descarga, el video esta caido")
 
     #pausa antes de elegir el reproductor
     #numero hebra es la posicion dondre saldra la barra de descarga, que corresponde con la hebra

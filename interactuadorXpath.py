@@ -48,7 +48,7 @@ def reproducirvideo(downloader, link_capitulo):
     downloader.close_all_tabs(1)
     sleep(0.5)
 
-    downloader.seleccionar_opcionFembed()
+    seleccionar_opcionFembed(downloader)
 
     #Guardamos el nombre del capitulo
     nombre_capitulo = downloader.driver.find_element_by_xpath('//*[@id="XpndCn"]/div[1]/div[1]/h1').text
@@ -56,7 +56,7 @@ def reproducirvideo(downloader, link_capitulo):
     #Espera carga reproductor
     sleep(7)
 
-    capitulo = downloader.getVideo_Fembed()
+    capitulo = getVideo_Fembed(downloader)
 
     #Guarreria para que cierre la puta tab 
     #self.abrirnuevaTab()
