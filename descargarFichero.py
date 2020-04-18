@@ -35,6 +35,12 @@ def my_hook(t):
     return update_to
 
 #la posicion es el numero de hebra para el multihebrado
-def descargarFicheroconBarra(url, nombrefichero, posicion_barra):
-    with tqdm(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=nombrefichero.split('/')[-1], position=posicion_barra) as t: 
-            urllib.urlretrieve(url, filename=nombrefichero, reporthook=my_hook(t), data=None)
+def descargarFicheroconBarra(url, ruta, nombrefichero, posicion_barra):
+    try:
+        with tqdm(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=nombrefichero, position=posicion_barra) as t: 
+                urllib.urlretrieve(url, filename=ruta + nombrefichero, reporthook=my_hook(t), data=None)
+    except IOError:
+        print("El capitulo: " + nombrefichero + " error de descarga, el video esta caido")
+        #Guardamos que capitulo no se ha podido descargar.
+        with open( ruta + 'CAPITULOS_NO_DESCARGADOS.txt', 'a+') as f:
+            f.write(nombrefichero)
