@@ -43,4 +43,4 @@ def descargarFicheroconBarra(url, ruta, nombrefichero, posicion_barra):
         print("El capitulo: " + nombrefichero + " error de descarga, el video esta caido")
         #Guardamos que capitulo no se ha podido descargar.
         with open( ruta + 'CAPITULOS_NO_DESCARGADOS.txt', 'a+') as f:
-            f.write(nombrefichero)
+            f.write(nombrefichero+'\n')
