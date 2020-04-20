@@ -3,6 +3,7 @@ import time
 import urllib
 from time import sleep
 import threading
+import colorama
 
 def my_hook(t):
     """Wraps tqdm instance.

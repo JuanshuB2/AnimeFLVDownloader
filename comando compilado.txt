@@ -1,0 +1,1 @@
+c:\Python27\python.exe -m PyInstaller animedownload_bot.py --onefile --hidden-import selenium.selenium 
