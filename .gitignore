@@ -3,3 +3,7 @@ Animes descargados/
 AnimeFLVdownloaderENV/
 debug.log
 *.pyc
+__pycache__/
+build/
+dist/
+*.spec

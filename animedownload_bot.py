@@ -18,7 +18,7 @@ class AnimeDownloader():
     def __init__(self):
         opcion_muteo = webdriver.ChromeOptions()
         opcion_muteo.add_argument("--mute-audio")
-        self.driver = webdriver.Chrome('/usr/local/bin/chromedriver.exe', chrome_options=opcion_muteo)
+        self.driver = webdriver.Chrome('chromedriver.exe', chrome_options=opcion_muteo)
         
     #tabs_vivas, cuantas tabs quieres dejar vivas desde el inicio
     def close_all_tabs(self, tabs_vivas):
@@ -104,28 +104,34 @@ def existsCarpeta(carpeta):
         os.makedirs(carpeta)
 
 
-if( len(sys.argv) >= 2 ):
-    if( sys.argv[1] == "-d" ):
-        print("Modo dinamico")
-        bot = AnimeDownloader()
-    else:
-        ad = AnimeDownloader()
-
-        existsCarpeta(carpetaDescargas)
-
-        try:
-            ad.descargar_serie(sys.argv[1])
-
-            ad.driver.quit()
-        except Exception as e:
-            with open(carpetaDescargas + 'BUG_LOG.txt', 'a+') as f:
-                f.write("ERROR EN LA SERIE: " + sys.argv[1] )
-                f.write(str(e))
-                f.write(traceback.format_exc())
-
-        for thread in threads:
-            thread.join()
-
+if( len(sys.argv) >= 2 and sys.argv[1] == "-d" ):
+    print("Modo dinamico")
+    bot = AnimeDownloader()
 else:
-    print("Argumentos: link de la serie")
+
+    link_serie = None
+    if( len(sys.argv) == 1 ):
+        print("Introduce el link de la serie a descargar: ")
+        link_serie = raw_input()
+    else:
+        link_serie = sys.argv[1]
+
+    ad = AnimeDownloader()
+
+    existsCarpeta(carpetaDescargas)
+
+    try:
+        ad.descargar_serie(link_serie)
+
+        ad.driver.quit()
+    except Exception as e:
+        with open(carpetaDescargas + 'BUG_LOG.txt', 'a+') as f:
+            f.write("ERROR EN LA SERIE: " + link_serie )
+            f.write(str(e))
+            f.write(traceback.format_exc())
+
+    for thread in threads:
+        thread.join()
+    
+    
 
